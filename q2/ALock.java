@@ -12,7 +12,11 @@ public class ALock implements MyLock {
       // TODO: initialize your algorithm
 		available = new boolean[numThread];
 		available[0] = true;
-		mySlot = new ThreadLocal<Integer>();
+		mySlot = new ThreadLocal<Integer>(){	
+			@Override protected Integer initialValue(){
+				return 0;
+			}
+		};
 		tailSlot = new AtomicInteger(0);
 		this.numThread = numThread;
     }
@@ -20,34 +24,40 @@ public class ALock implements MyLock {
     @Override
     public void lock(int myId) {
       // TODO: the locking algorithm
-		mySlot.set(tailSlot.getAndIncrement() % numThread);
-		while(!available[mySlot.get()]);
+		int slot = tailSlot.getAndIncrement() % numThread;
+		mySlot.set(slot);
+		while(!available[slot]);
     }
 
     @Override
     public void unlock(int myId) {
       // TODO: the unlocking algorithm
-		available[mySlot.get()] = false;
-		available[(mySlot.get()+1) % numThread] = true;
+		int slot = mySlot.get();
+		available[slot] = false;
+		available[(slot+1) % numThread] = true;
     }
 
 	public static void main(String[] args){
-		int numThread=0;
+		int numThread = 0;
+		int count = 1200000;
 
-		if(args.length != 1){
-			System.out.println("Invalid args. ./ALock [numThreads]");
-		System.exit(-1);
-		} else{
+		if(args.length == 1){
 			numThread = Integer.parseInt(args[0]);
+		} else if(args.length == 2){
+			numThread = Integer.parseInt(args[0]);
+			count = Integer.parseInt(args[1]);
+		} else{
+			System.out.println("Invalid args. ./ALock [numThreads] [count] ");
+			System.exit(-1);
 		}
-
+ 
 		ALock alock = new ALock(numThread);
 		int[] counter = new int[1];
 		counter[0] = 0;
 
 		OurThread[] t = new OurThread[numThread];
 		for(int n=0; n<numThread; n++){
-			t[n] = new OurThread(alock,counter,n);
+			t[n] = new OurThread(alock,counter,n,count/numThread);
 		}
 		
 		for(int n=0; n<numThread; n++){
@@ -60,10 +70,10 @@ public class ALock implements MyLock {
 			}
 		} catch (InterruptedException e) { }
 				
-		if(counter[0] != numThread){
-			System.out.println("ERROR: Expected:" + numThread + " Observed:" + counter[0]);
+		if(counter[0] != count){
+			System.out.println("ERROR: Expected:" + count + " Observed:" + counter[0]);
 		} else{
-			System.out.println("PASS: Expected:" + numThread + " Observed:" + counter[0]);
+			System.out.println("PASS: Expected:" + count + " Observed:" + counter[0]);
 		}
 	}
 }
