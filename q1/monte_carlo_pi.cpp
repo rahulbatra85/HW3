@@ -6,12 +6,10 @@
 #include <sstream>
 
 #define R 1
-#define EPSILON 0.0001
-#define PI_4 0.7853981625
 
 using namespace std;
 
-double randf(double low,double high){
+double randf(double low, double high){
     return (rand()/(double)(RAND_MAX))*abs(low-high)+low;
 }
 
@@ -43,7 +41,7 @@ double MonteCarloPi(int s) {
 
 	cout << "C: "<< c <<" S: "<< s <<endl;
 
-	double pi = double(c)/double(s);
+	double pi = 4*double(c)/double(s);
 	return pi;
 }
 

@@ -32,7 +32,8 @@ bool MatrixMult(int rowA, int colA, double* A, int rowB, int colB, double* B,
   // parameter C: indicates the matrix C, which is the results of A x B
   // parameter T: indicates the number of threads
   // return true if A and B can be multiplied; otherwise, return false 
-	cout << "Starting MatrixMult: ROWA=" << rowA << " COLA=" << colA << " ROWB=" << rowB << " COLB=" << colB << " T=" << T << endl;
+	cout << "Starting MatrixMult: ROWA=" << rowA << " COLA=" << colA << " ROWB=" << rowB << 
+	    " COLB=" << colB << " T=" << T << endl;
 	if(rowB != colA){
 		return false;
 	}
@@ -75,7 +76,9 @@ int main(int argc, const char *argv[]) {
 		cout << "Invalid args: ./matrix_mult [file1] [file2] [num threads]" << endl;
 		return -1;
 	}
-	cout << "File1: " << argv[1] << " File2: " << argv[2] << " Number of threads: " << argv[3] << endl;
+	
+	cout << "File1: " << argv[1] << " File2: " << argv[2] << " Number of threads: " 
+	    << argv[3] << endl;
 
 	string tstr(argv[3]);
 	stringstream ss(tstr); 
@@ -83,9 +86,8 @@ int main(int argc, const char *argv[]) {
 		
 	//Open and read files
 	fstream file1, file2;
-	file1.open(argv[1]);
-	file2.open(argv[2]);
 	
+	file1.open(argv[1]);	
 	file1 >> ROWA;
 	file1 >> COLA;
 	A = new double[ROWA*COLA];
@@ -96,7 +98,8 @@ int main(int argc, const char *argv[]) {
 	}
 	file1.close();
 	//printMatrix(A,ROWA,COLA);
-
+	
+	file2.open(argv[2]);
 	file2 >> ROWB;
 	file2 >> COLB;
 	B = new double[ROWB*COLB];
@@ -112,25 +115,36 @@ int main(int argc, const char *argv[]) {
 
 	double start = omp_get_wtime();
 	double end;
-  if(MatrixMult(ROWA, COLA, A, ROWB, COLB, B, C, T)) {
+	
+    if(MatrixMult(ROWA, COLA, A, ROWB, COLB, B, C, T)) {
     // TODO: Output the results
-	end = omp_get_wtime();
+	    end = omp_get_wtime();
 
 	//printMatrix(C,ROWA,COLB);
-  } else {
-    cout << "the colA != rowB MatrixMult return false" << endl;
-  }
-
+    } 
+    else {
+        cout << "the colA != rowB MatrixMult return false" << endl;
+        return -1;
+    }
 	cout << "OPENMP: execution time: " << end - start << endl;
-	ofstream file3("Cresult");
+	
+	ofstream file3("C_result");
 	file3 << ROWA << " " << COLB << endl;
+	cout << ROWA << " " << COLB << endl;
 	for(int r=0; r<ROWA; r++){
 		for(int c=0; c<COLB; c++){
-			file3 <<  C[r*COLB + c] << " ";
+			file3 << C[r*COLB + c] << " ";
+			cout <<  C[r*COLB + c] << " ";		
 		}
 		file3 << endl;
+		cout << endl;
 	}
 
 	file3.close();
-  return 0;
+    return 0;
 }
+
+
+
+
+

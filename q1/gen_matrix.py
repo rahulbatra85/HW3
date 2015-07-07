@@ -8,10 +8,6 @@ maxROWA=100
 maxCOLA=100
 maxROWB=100
 maxCOLB=100
-#maxROWA=5
-#maxCOLA=5
-#maxROWB=5
-#maxCOLB=5
 
 noFloat=0
 
@@ -28,7 +24,7 @@ def main():
 			if noFloat > 0:
 				val = random.randint(0,10)
 			else:
-				val = random.uniform(0.0,1000000.0)
+				val = random.uniform(0.0,1000.0)
 			A[r][c] = val
 			f1.write(str(val)+" ");
 		
@@ -45,7 +41,7 @@ def main():
 			if noFloat > 0:
 				val = random.randint(0,10)
 			else:
-				val = random.uniform(0.0,1000000.0)
+				val = random.uniform(0.0,1000.0)
 			B[r][c] = val
 			f2.write(str(val)+" ");
 		
