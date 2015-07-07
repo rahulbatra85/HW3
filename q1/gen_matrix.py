@@ -15,6 +15,7 @@ def main():
 	A = [[0 for col in range(maxCOLA)] for row in range(maxROWA)]
 	B = [[0 for col in range(maxCOLB)] for row in range(maxROWB)]
 	C = [[0 for col in range(maxCOLB)] for row in range(maxROWA)]
+	
 	f1 = open(file1, 'w')
 	f1.write(str(maxROWA)+" "+str(maxCOLA))
 	f1.write("\n")

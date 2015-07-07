@@ -37,7 +37,7 @@ bool MatrixMult(int rowA, int colA, double* A, int rowB, int colB, double* B,
 		return false;
 	}
 
-int i,j, c;
+    int i,j, c;
 	for(i=0; i<rowA; i++){
 		for(j=0; j<colB; j++){
 			C[i*colB+j] = 0;

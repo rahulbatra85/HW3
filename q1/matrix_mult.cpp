@@ -32,8 +32,8 @@ bool MatrixMult(int rowA, int colA, double* A, int rowB, int colB, double* B,
   // parameter C: indicates the matrix C, which is the results of A x B
   // parameter T: indicates the number of threads
   // return true if A and B can be multiplied; otherwise, return false 
-	cout << "Starting MatrixMult: ROWA=" << rowA << " COLA=" << colA << " ROWB=" << rowB << 
-	    " COLB=" << colB << " T=" << T << endl;
+	//cout << "Starting MatrixMult: ROWA=" << rowA << " COLA=" << colA 
+	//    << " ROWB=" << rowB << "COLB=" << colB << " T=" << T << endl;
 	if(rowB != colA){
 		return false;
 	}
@@ -42,10 +42,10 @@ bool MatrixMult(int rowA, int colA, double* A, int rowB, int colB, double* B,
 	omp_set_num_threads(T);
 	#pragma omp parallel shared(A,B,C) private(i,j,c)
 	{
-		#pragma omp master 
+		/*#pragma omp master 
 		{
 			cout << "OPENMP: numThreads " << omp_get_num_threads() << endl;	
-		}
+		}*/
 
 		#pragma omp for schedule(dynamic)
 		for(i=0; i<rowA; i++){
@@ -76,9 +76,8 @@ int main(int argc, const char *argv[]) {
 		cout << "Invalid args: ./matrix_mult [file1] [file2] [num threads]" << endl;
 		return -1;
 	}
-	
-	cout << "File1: " << argv[1] << " File2: " << argv[2] << " Number of threads: " 
-	    << argv[3] << endl;
+	//cout << "File1: " << argv[1] << " File2: " << argv[2] << " Number of threads: " 
+	//    << argv[3] << endl;
 
 	string tstr(argv[3]);
 	stringstream ss(tstr); 
@@ -119,14 +118,13 @@ int main(int argc, const char *argv[]) {
     if(MatrixMult(ROWA, COLA, A, ROWB, COLB, B, C, T)) {
     // TODO: Output the results
 	    end = omp_get_wtime();
-
-	//printMatrix(C,ROWA,COLB);
+	    //printMatrix(C,ROWA,COLB);
     } 
     else {
         cout << "the colA != rowB MatrixMult return false" << endl;
         return -1;
     }
-	cout << "OPENMP: execution time: " << end - start << endl;
+
 	
 	ofstream file3("C_result");
 	file3 << ROWA << " " << COLB << endl;
@@ -141,6 +139,10 @@ int main(int argc, const char *argv[]) {
 	}
 
 	file3.close();
+    
+    cout << endl;	
+	cout << "OPENMP: execution time: " << end - start << endl;
+	
     return 0;
 }
 
