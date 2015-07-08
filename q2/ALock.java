@@ -43,7 +43,7 @@ public class ALock implements MyLock {
 	public static void main(String[] args){
 		int numThread = 0;
 		int count = 1200000;
-        int shared_counter = 0; 
+        int[] shared_counter = {0}; //must use int[] to pass by ref
         //Assumption: count%numThread == 0
 
 		if(args.length == 1) {
@@ -66,6 +66,7 @@ public class ALock implements MyLock {
 			//each thread will add to the shared_counter += count/numThread
 		}
 		
+		long start = System.nanoTime();		
 		for(int n=0; n<numThread; n++){
 			t[n].start();
 		}
@@ -76,12 +77,14 @@ public class ALock implements MyLock {
 			}
 		} 
 		catch (InterruptedException e) { }
-				
-		if(shared_counter != count){
-			System.out.println("ERROR: Expected:" + count + " Observed:" + shared_counter);
+		long end = System.nanoTime();	
+		long executeTimeMS = (end - start)/1000000; //1ms = 1000000ns		
+							
+		if(shared_counter[0] != count){
+			System.out.println("ERROR: Expected:" + count + " Observed:" + shared_counter[0]);
 		} 
 		else {
-			System.out.println("PASS: Expected:" + count + " Observed:" + shared_counter);
+			System.out.println("PASS. Time: " + executeTimeMS + "ms");
 		}
 	}//END VOID MAIN
 }

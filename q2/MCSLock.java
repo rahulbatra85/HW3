@@ -16,7 +16,7 @@ public class MCSLock implements MyLock {
 	volatile AtomicReference<QNode> tail; //Reference to tail node
 	ThreadLocal<QNode> myNode;
 
-    public MCSLock(int numThread) {
+    public MCSLock() {
 		tail = new AtomicReference<QNode>(null);
 		myNode = new ThreadLocal<QNode>() {
 			@Override 
@@ -27,7 +27,7 @@ public class MCSLock implements MyLock {
     }
 
     @Override
-    public void lock(int myId) {
+    public void lock(int myId) { //note: myID is not used
 		QNode mnode = myNode.get();
 		QNode pred = tail.getAndSet(mnode);
 		if(pred != null) {
@@ -38,7 +38,7 @@ public class MCSLock implements MyLock {
     }
 
     @Override
-    public void unlock(int myId) {
+    public void unlock(int myId) { //note: myID is not used
 		QNode mnode = myNode.get();
 		if(mnode.next == null) {
 			if(tail.compareAndSet(mnode,null)) {
@@ -51,9 +51,9 @@ public class MCSLock implements MyLock {
     }
 
 	public static void main(String[] args){
-		int numThread=0;
+		int numThread = 0;
 		int count = 1200000;
-        int shared_counter = 0; 
+        int[] shared_counter = {0};  //must use int[] to pass by ref
         //Assumption: count%numThread == 0
 
 		if(args.length == 1){
@@ -68,15 +68,16 @@ public class MCSLock implements MyLock {
 			System.exit(-1);
 		}
  
-		System.out.println("MCSLock numThreads="+numThread+" count="+ count);
+		//System.out.println("MCSLock numThreads="+numThread+" count="+ count);
 
-		MCSLock mcsLock = new MCSLock(numThread);
+		MCSLock mcsLock = new MCSLock();
 		OurThread[] t = new OurThread[numThread];
 		
 		for(int n=0; n<numThread; n++){
-			t[n] = new OurThread(mcsLock, counter, n, count/numThread);
+			t[n] = new OurThread(mcsLock, shared_counter, n, count/numThread);
 		}
 		
+		long start = System.nanoTime();
 		for(int n=0; n<numThread; n++){
 			t[n].start();
 		}
@@ -87,12 +88,14 @@ public class MCSLock implements MyLock {
 			}
 		} 
 		catch (InterruptedException e) { }
-				
-		if(shared_counter != count){
-			System.out.println("ERROR: Expected:" + count + " Observed:" + shared_counter);
+		long end = System.nanoTime();	
+		long executeTimeMS = (end - start)/1000000; //1ms = 1000000ns
+		
+		if(shared_counter[0] != count){
+			System.out.println("ERROR: Expected:" + count + " Observed:" + shared_counter[0]);
 		} 
 		else{
-			System.out.println("PASS: Expected:" + count + " Observed:" + shared_counter);
+			System.out.println("PASS. Time: " + executeTimeMS + "ms");
 		}
 	} //END VOID MAIN
 }
