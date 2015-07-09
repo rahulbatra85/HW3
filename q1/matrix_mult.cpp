@@ -140,7 +140,7 @@ int main(int argc, const char *argv[]) {
 
 	//file3.close();
     
-    cout << endl;	
+    //cout << endl;	
 	//cout << "OPENMP: execution time: " << end - start << endl;
 	
     return 0;
