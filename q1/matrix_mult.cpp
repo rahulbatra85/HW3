@@ -118,15 +118,15 @@ int main(int argc, const char *argv[]) {
     if(MatrixMult(ROWA, COLA, A, ROWB, COLB, B, C, T)) {
     // TODO: Output the results
 	    end = omp_get_wtime();
-	    //printMatrix(C,ROWA,COLB);
+	    printMatrix(C,ROWA,COLB);
     } 
     else {
         cout << "the colA != rowB MatrixMult return false" << endl;
         return -1;
     }
 
-	
-	ofstream file3("C_result");
+	//Only output to standard output.Done above
+	/*ofstream file3("C_result");
 	file3 << ROWA << " " << COLB << endl;
 	cout << ROWA << " " << COLB << endl;
 	for(int r=0; r<ROWA; r++){
@@ -136,12 +136,12 @@ int main(int argc, const char *argv[]) {
 		}
 		file3 << endl;
 		cout << endl;
-	}
+	}*/
 
-	file3.close();
+	//file3.close();
     
     cout << endl;	
-	cout << "OPENMP: execution time: " << end - start << endl;
+	//cout << "OPENMP: execution time: " << end - start << endl;
 	
     return 0;
 }
